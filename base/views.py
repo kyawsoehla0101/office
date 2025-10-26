@@ -6,3 +6,6 @@ def index(request):
 
 def member(request):
     return render(request, 'pages/set/member.html')
+
+def addReport(request):
+    return render(request, 'pages/set/add-report.html')
