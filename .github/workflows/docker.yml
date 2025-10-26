@@ -20,8 +20,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: kyawsoehla
+          password: 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
 
       - name: Build Docker image
         run: docker build -t ghcr.io/kyawsoehla/office:latest .
