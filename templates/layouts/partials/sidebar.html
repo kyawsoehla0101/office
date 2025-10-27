@@ -1,168 +1,219 @@
 <aside id="sidebar" class="col-span-12 h-full md:col-span-3 lg:col-span-2">
-        <nav
-          class="scroll-slim sticky top-20 max-h-[calc(100vh-96px)] space-y-1 overflow-y-auto rounded-2xl border border-slate-200 bg-white p-3 shadow-soft dark:border-slate-800 dark:bg-slate-900">
-          <div
-            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200">
-            Software Engineering Team
-          </div>
-          <hr>
-          <a href="{% url 'index' %}"
-            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800">
-            <svg class="h-5 w-5 text-slate-400 group-hover:text-brand-600" viewBox="0 0 24 24" fill="none"
+  <nav
+    class="scroll-slim sticky top-20 max-h-[calc(100vh-96px)] overflow-y-auto rounded-2xl border border-slate-200 bg-white p-3 shadow-soft space-y-6 dark:border-slate-800 dark:bg-slate-900">
+<!-- 🔹 ADMIN HOME -->
+    <div>
+      <h2 class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 px-3 mb-2">
+        Administration
+      </h2>
+      <ul class="space-y-1">
+        <li>
+          <a href="{% url 'dashboard' %}"
+            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium 
+                   {% if active_menu == 'admin_home' %}
+                     bg-slate-100 text-indigo-600 dark:bg-slate-800 dark:text-indigo-400
+                   {% else %}
+                     text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800
+                   {% endif %}">
+            <svg class="h-5 w-5 text-slate-400 group-hover:text-indigo-600" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="1.6">
-              <path d="M3 12l9-9 9 9" />
-              <path d="M9 21V9h6v12" />
+              <path d="M3 12l9-9 9 9M9 21V9h6v12" />
+            </svg>
+            Admin Home
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'admin.users' %}"
+            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium
+                   {% if active_menu == 'admin_users' %}
+                     bg-slate-100 text-indigo-600 dark:bg-slate-800 dark:text-indigo-400
+                   {% else %}
+                     text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800
+                   {% endif %}">
+            <svg class="h-5 w-5 text-slate-400 group-hover:text-indigo-600" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1.6">
+              <circle cx="12" cy="7" r="4" />
+              <path d="M20 21a8 8 0 1 0-16 0" />
+            </svg>
+            Users
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'admin.settings' %}"
+            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium
+                   {% if active_menu == 'admin_settings' %}
+                     bg-slate-100 text-indigo-600 dark:bg-slate-800 dark:text-indigo-400
+                   {% else %}
+                     text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800
+                   {% endif %}">
+            <svg class="h-5 w-5 text-slate-400 group-hover:text-indigo-600" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1.6">
+              <path d="M10.325 4.317a1 1 0 011.35 0l1.242 1.04a1 1 0 00.923.16l1.518-.505a1 1 0 011.18.586l.707 1.414a1 1 0 00.83.553l1.6.133a1 1 0 01.9.9l.133 1.6a1 1 0 00.553.83l1.414.707a1 1 0 01.586 1.18l-.505 1.518a1 1 0 00.16.923l1.04 1.242a1 1 0 010 1.35l-1.04 1.242a1 1 0 00-.16.923l.505 1.518a1 1 0 01-.586 1.18l-1.414.707a1 1 0 00-.553.83l-.133 1.6a1 1 0 01-.9.9l-1.6.133a1 1 0 00-.83.553l-.707 1.414a1 1 0 01-1.18.586l-1.518-.505a1 1 0 00-.923.16l-1.242 1.04a1 1 0 01-1.35 0l-1.242-1.04a1 1 0 00-.923-.16l-1.518.505a1 1 0 01-1.18-.586l-.707-1.414a1 1 0 00-.83-.553l-1.6-.133a1 1 0 01-.9-.9l-.133-1.6a1 1 0 00-.553-.83l-1.414-.707a1 1 0 01-.586-1.18l.505-1.518a1 1 0 00-.16-.923L2.11 15.933a1 1 0 010-1.35l1.04-1.242a1 1 0 00.16-.923l-.505-1.518a1 1 0 01.586-1.18l1.414-.707a1 1 0 00.553-.83l.133-1.6a1 1 0 01.9-.9l1.6-.133a1 1 0 00.83-.553l.707-1.414a1 1 0 011.18-.586l1.518.505a1 1 0 00.923-.16l1.242-1.04z" />
+            </svg>
+            Settings
+          </a>
+        </li>
+      </ul>
+    </div>
+    <!-- SOFTWARE ENGINEERING TEAM -->
+    <div>
+      <h2 class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 px-3 mb-2">
+        Software Engineering Team
+      </h2>
+      <ul class="space-y-1">
+        <li>
+          <a href="{% url 'set.index' %}"
+            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium 
+                   {% if active_menu == 'set_dashboard' %}bg-slate-100 text-blue-600 dark:bg-slate-800 dark:text-blue-400{% else %}
+                   text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800{% endif %}">
+            <svg class="h-5 w-5 text-slate-400 group-hover:text-blue-600" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1.6">
+              <path d="M3 12l9-9 9 9M9 21V9h6v12" />
             </svg>
             Dashboard
           </a>
-          <a href="{% url 'index' %}"
-            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800">
-            <svg class="h-5 w-5 text-slate-400 group-hover:text-brand-600" viewBox="0 0 24 24" fill="none"
+        </li>
+        <li>
+          <a href="{% url 'set.projects' %}"
+            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium
+                   {% if active_menu == 'set_projects' %}bg-slate-100 text-blue-600 dark:bg-slate-800 dark:text-blue-400{% else %}
+                   text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800{% endif %}">
+            <svg class="h-5 w-5 text-slate-400 group-hover:text-blue-600" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="1.6">
-              <path d="M3 3h18v4H3z" />
-              <path d="M3 13h18v8H3z" />
-              <path d="M7 7v6M17 7v6" />
+              <path d="M3 3h18v4H3zM3 13h18v8H3zM7 7v6M17 7v6" />
             </svg>
             Projects
           </a>
-          <a href="{% url 'member' %}"
-            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800">
-            <svg class="h-5 w-5 text-slate-400 group-hover:text-brand-600" viewBox="0 0 24 24" fill="none"
+        </li>
+        <li>
+          <a href="{% url 'set.members' %}"
+            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium
+                   {% if active_menu == 'set_members' %}bg-slate-100 text-blue-600 dark:bg-slate-800 dark:text-blue-400{% else %}
+                   text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800{% endif %}">
+            <svg class="h-5 w-5 text-slate-400 group-hover:text-blue-600" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="1.6">
               <circle cx="12" cy="7" r="4" />
               <path d="M20 21a8 8 0 1 0-16 0" />
             </svg>
             Members
           </a>
-          <a href="#"
+        </li>
+        <li>
+          <a href=""
             class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800">
-            <svg class="h-5 w-5 text-slate-400 group-hover:text-brand-600" viewBox="0 0 24 24" fill="none"
+            <svg class="h-5 w-5 text-slate-400 group-hover:text-blue-600" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="1.6">
               <path d="M21 15V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9" />
               <path d="M7 22h10a2 2 0 0 0 2-2v-5H5v5a2 2 0 0 0 2 2z" />
             </svg>
             Daily Reports
           </a>
-          <a href="#"
-            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800">
-            <svg class="h-5 w-5 text-slate-400 group-hover:text-brand-600" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="1.6">
-              <circle cx="12" cy="12" r="3" />
-              <path
-                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V22a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H2a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 6.1 4.22l.06.06a1.65 1.65 0 0 0 1.82.33H8a1.65 1.65 0 0 0 1-1.51V2a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06A2 2 0 1 1 21.78 6.1l-.06.06a1.65 1.65 0 0 0-.33 1.82V8a1.65 1.65 0 0 0 1.51 1H22a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-            </svg>
-            Settings
-          </a>
+        </li>
+    <li>
+      <a href=""
+        class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium 
+               {% if active_menu == 'set_requirements' %}bg-slate-100 text-indigo-600 dark:bg-slate-800 dark:text-indigo-400{% else %}
+               text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800{% endif %}">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M8 6h13M8 12h13m-7 6h7M3 6h.01M3 12h.01M3 18h.01" />
+        </svg>
+        Requirements
+      </a>
+    </li>
+      </ul>
+    </div>
 
-
-          <!-- Hardware Engineering Team -->
-           <div
-            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200">
-            Hardware Engineering Team
-          </div>
-          <hr>
-          <a href="#"
-            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800">
-            <svg class="h-5 w-5 text-slate-400 group-hover:text-brand-600" viewBox="0 0 24 24" fill="none"
+    <!-- HARDWARE ENGINEERING TEAM -->
+    <div>
+      <h2 class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 px-3 mb-2">
+        Hardware Engineering Team
+      </h2>
+      <ul class="space-y-1">
+        <li>
+          <a href="{% url 'het.index' %}"
+            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium 
+                   {% if active_menu == 'het_dashboard' %}bg-slate-100 text-green-600 dark:bg-slate-800 dark:text-green-400{% else %}
+                   text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800{% endif %}">
+            <svg class="h-5 w-5 text-slate-400 group-hover:text-green-600" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="1.6">
-              <path d="M3 12l9-9 9 9" />
-              <path d="M9 21V9h6v12" />
+              <path d="M3 12l9-9 9 9M9 21V9h6v12" />
             </svg>
             Dashboard
           </a>
-          <a href="#"
-            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800">
-            <svg class="h-5 w-5 text-slate-400 group-hover:text-brand-600" viewBox="0 0 24 24" fill="none"
+        </li>
+        <li>
+          <a href=""
+            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium
+                   {% if active_menu == 'het_projects' %}bg-slate-100 text-green-600 dark:bg-slate-800 dark:text-green-400{% else %}
+                   text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800{% endif %}">
+            <svg class="h-5 w-5 text-slate-400 group-hover:text-green-600" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="1.6">
-              <path d="M3 3h18v4H3z" />
-              <path d="M3 13h18v8H3z" />
-              <path d="M7 7v6M17 7v6" />
+              <path d="M3 3h18v4H3zM3 13h18v8H3zM7 7v6M17 7v6" />
             </svg>
             Projects
           </a>
-          <a href="#"
-            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800">
-            <svg class="h-5 w-5 text-slate-400 group-hover:text-brand-600" viewBox="0 0 24 24" fill="none"
+        </li>
+        <li>
+          <a href="{% url 'het.members' %}"
+            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium
+                   {% if active_menu == 'het_members' %}bg-slate-100 text-green-600 dark:bg-slate-800 dark:text-green-400{% else %}
+                   text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800{% endif %}">
+            <svg class="h-5 w-5 text-slate-400 group-hover:text-green-600" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="1.6">
               <circle cx="12" cy="7" r="4" />
               <path d="M20 21a8 8 0 1 0-16 0" />
             </svg>
             Members
           </a>
-          <a href="#"
-            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800">
-            <svg class="h-5 w-5 text-slate-400 group-hover:text-brand-600" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="1.6">
-              <path d="M21 15V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9" />
-              <path d="M7 22h10a2 2 0 0 0 2-2v-5H5v5a2 2 0 0 0 2 2z" />
-            </svg>
-            Daily Reports
-          </a>
-          <a href="#"
-            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800">
-            <svg class="h-5 w-5 text-slate-400 group-hover:text-brand-600" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="1.6">
-              <circle cx="12" cy="12" r="3" />
-              <path
-                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V22a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H2a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 6.1 4.22l.06.06a1.65 1.65 0 0 0 1.82.33H8a1.65 1.65 0 0 0 1-1.51V2a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06A2 2 0 1 1 21.78 6.1l-.06.06a1.65 1.65 0 0 0-.33 1.82V8a1.65 1.65 0 0 0 1.51 1H22a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-            </svg>
-            Settings
-          </a>
+        </li>
+      </ul>
+    </div>
 
-          <!-- Training School -->
-
-          <div
-            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200">
-            Training School
-          </div>
-          <hr>
-          <a href="#"
-            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800">
-            <svg class="h-5 w-5 text-slate-400 group-hover:text-brand-600" viewBox="0 0 24 24" fill="none"
+    <!-- TRAINING SCHOOL -->
+    <div>
+      <h2 class="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 px-3 mb-2">
+        Training & Learning
+      </h2>
+      <ul class="space-y-1">
+        <li>
+          <a href="{% url 'training.index' %}"
+            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium 
+                   {% if active_menu == 'training_dashboard' %}bg-slate-100 text-amber-600 dark:bg-slate-800 dark:text-amber-400{% else %}
+                   text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800{% endif %}">
+            <svg class="h-5 w-5 text-slate-400 group-hover:text-amber-600" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="1.6">
-              <path d="M3 12l9-9 9 9" />
-              <path d="M9 21V9h6v12" />
+              <path d="M3 12l9-9 9 9M9 21V9h6v12" />
             </svg>
             Dashboard
           </a>
-          <a href="#"
-            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800">
-            <svg class="h-5 w-5 text-slate-400 group-hover:text-brand-600" viewBox="0 0 24 24" fill="none"
+        </li>
+        <li>
+          <a href=""
+            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium
+                   {% if active_menu == 'training_courses' %}bg-slate-100 text-amber-600 dark:bg-slate-800 dark:text-amber-400{% else %}
+                   text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800{% endif %}">
+            <svg class="h-5 w-5 text-slate-400 group-hover:text-amber-600" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="1.6">
-              <path d="M3 3h18v4H3z" />
-              <path d="M3 13h18v8H3z" />
-              <path d="M7 7v6M17 7v6" />
+              <path d="M3 3h18v4H3zM3 13h18v8H3zM7 7v6M17 7v6" />
             </svg>
-            Projects
+            Courses
           </a>
-          <a href="#"
-            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800">
-            <svg class="h-5 w-5 text-slate-400 group-hover:text-brand-600" viewBox="0 0 24 24" fill="none"
+        </li>
+        <li>
+          <a href=""
+            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium
+                   {% if active_menu == 'training_members' %}bg-slate-100 text-amber-600 dark:bg-slate-800 dark:text-amber-400{% else %}
+                   text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800{% endif %}">
+            <svg class="h-5 w-5 text-slate-400 group-hover:text-amber-600" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="1.6">
               <circle cx="12" cy="7" r="4" />
               <path d="M20 21a8 8 0 1 0-16 0" />
             </svg>
-            Members
+            Students
           </a>
-          <a href="#"
-            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800">
-            <svg class="h-5 w-5 text-slate-400 group-hover:text-brand-600" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="1.6">
-              <path d="M21 15V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9" />
-              <path d="M7 22h10a2 2 0 0 0 2-2v-5H5v5a2 2 0 0 0 2 2z" />
-            </svg>
-            Daily Reports
-          </a>
-          <a href="#"
-            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800">
-            <svg class="h-5 w-5 text-slate-400 group-hover:text-brand-600" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="1.6">
-              <circle cx="12" cy="12" r="3" />
-              <path
-                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V22a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H2a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 6.1 4.22l.06.06a1.65 1.65 0 0 0 1.82.33H8a1.65 1.65 0 0 0 1-1.51V2a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06A2 2 0 1 1 21.78 6.1l-.06.06a1.65 1.65 0 0 0-.33 1.82V8a1.65 1.65 0 0 0 1.51 1H22a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-            </svg>
-            Settings
-          </a>
-        </nav>
-
-      </aside>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</aside>

@@ -1,11 +1,66 @@
 from django.shortcuts import render
+from django.utils import timezone
+from datetime import timedelta
+# from django.contrib.auth import get_user_model
 
-# Create your views here.
-def index(request):
-    return render(request, 'pages/set/index.html')
+# User = get_user_model()
 
-def member(request):
-    return render(request, 'pages/set/member.html')
+def dashboard(request):
+    context = {
+        "today": timezone.now(),
+        "software_count": 8,
+        "hardware_count": 4,
+        "training_count": 5,
+        "software_last_updated": timezone.now(),
+        "hardware_last_updated": timezone.now() - timedelta(days=2),
+        "training_last_updated": timezone.now() - timedelta(days=1),
+        "total_departments": 3,
+        "total_members": 124,
+        "total_projects": 19,
+        "software_progress": 80,
+        "hardware_progress": 65,
+        "training_progress": 90,
+        "notifications": [
+            {"message": "New user registered for training program", "level": "info", "timestamp": timezone.now() - timedelta(hours=1)},
+            {"message": "Hardware inventory needs review", "level": "warning", "timestamp": timezone.now() - timedelta(hours=3)},
+        ],
+        "recent_actions": [
+            {"type": "add", "message": "Added new Software project 'Quick Chat'", "timestamp": timezone.now() - timedelta(hours=2)},
+            {"type": "update", "message": "Updated team member roles", "timestamp": timezone.now() - timedelta(hours=5)},
+        ],
+    }
+    return render(request, 'pages/admin/dashboard.html', context)
 
-def addReport(request):
-    return render(request, 'pages/set/add-report.html')
+def users(request):
+    # users = User.objects.all().order_by('id')
+    # total_users = users.count()
+    # total_admins = users.filter(is_superuser=True).count()
+    # total_active = users.filter(is_active=True).count()
+    # context = {
+    #     "users": users,
+    #     "total_users": total_users,
+    #     "total_admins": total_admins,
+    #     "total_active": total_active,
+    # }
+    return render(request, 'pages/admin/users.html')
+
+# views.py
+from django.shortcuts import render
+
+def settings(request):
+    if request.method == 'POST':
+        # handle form save logic here
+        pass
+
+    context = {
+        'system_name': 'Engineering Management Dashboard',
+        'organization': 'Software Engineering Team II',
+        'theme': 'light',
+        'email_notifications': True,
+        'system_warnings': True,
+        'weekly_reports': False,
+        'min_password_length': 8,
+        'session_timeout': 30,
+        'active_menu': 'admin_settings',
+    }
+    return render(request, 'pages/admin/settings.html', context)
