@@ -7,6 +7,7 @@ from django.contrib import messages
 # Create your views here.
 def index(request):
     context = {
+        "active_menu": "set_index",
         "active_developers": 42,
         "new_devs_this_month": 3,
         "ongoing_projects": 9,
@@ -60,7 +61,10 @@ def projects(request):
     return render(request, 'pages/set/projects.html', context)
 
 def addMember(request):
-    return render(request, 'pages/set/add-member.html')
+    context = {
+        "active_menu": "set_add_member",
+    }
+    return render(request, 'pages/set/add-member.html', context)
 
 def editMember(request):
     return render(request, 'pages/set/edit-member.html')
@@ -113,7 +117,7 @@ def requirements(request):
     ]
     return render(request, "pages/set/requirements.html", {
         "requirements": requirements,
-        # "active_menu": "set_requirements"
+        "active_menu": "set_requirements"
     })
 
 def addRequirement(request):
@@ -134,3 +138,15 @@ def addRequirement(request):
     return render(request, "pages/set/add-requirement.html", {
         "active_menu": "set_requirements"
     })
+
+def report(request):
+    reports = [
+        {"title": "Report 1", "department": "Software Engineering Team", "author": "Aung Kyaw", "created_at": timezone.now() - timedelta(days=1)},
+        {"title": "Report 2", "department": "Software Engineering Team", "author": "Thandar Hlaing", "created_at": timezone.now() - timedelta(days=2)},
+        {"title": "Report 3", "department": "Software Engineering Team", "author": "Ko Ko", "created_at": timezone.now() - timedelta(days=3)},
+    ]
+    context = {
+        "reports": reports,
+        "active_menu": "set_report",
+    }
+    return render(request, "pages/set/report.html", context)

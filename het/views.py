@@ -7,6 +7,7 @@ from datetime import timedelta
 # Create your views here.
 def dashboard(request):
     context = {
+        "active_menu": "het_index",
         "active_machines": 23,
         "new_devices_this_week": 4,
         "under_maintenance": 5,

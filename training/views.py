@@ -4,6 +4,7 @@ from datetime import timedelta
 
 def index(request):
     context = {
+        "active_menu": "training_index",
         "active_students": 256,
         "new_students_this_month": 14,
         "ongoing_courses": 12,
@@ -24,3 +25,33 @@ def index(request):
         ],
     }
     return render(request, "pages/training/index.html", context)
+
+def students(request):
+    students = [
+        {
+            "name": "Aung Kyaw",
+            "email": "aungkyaw@example.com",
+            "phone": "0967890123",
+            "course_name": "Python for Beginners",
+            "enrolled_at": timezone.now() - timedelta(days=10),
+        },
+        {
+            "name": "Mg Mg",
+            "email": "mgmg@example.com",
+            "phone": "0967890456",
+            "course_name": "Advanced Django",
+            "enrolled_at": timezone.now() - timedelta(days=5),
+        },
+        {
+            "name": "Htet Naing",
+            "email": "htetnaing@example.com",
+            "phone": "0967890789",
+            "course_name": "AI & Machine Learning",
+            "enrolled_at": timezone.now() - timedelta(days=2),
+        },
+    ]
+    context = {
+        "active_menu": "training_members",
+        "students": students,
+    }
+    return render(request, 'pages/training/students.html', context)

@@ -12,4 +12,5 @@ urlpatterns = [
     path('delete-member/', views.deleteMember, name='set.delete-member'),
     path('requirements/', views.requirements, name='set.requirements'),
     path('add-requirement/', views.addRequirement, name='set.add-requirement'),
+    path('report/', views.report, name='set.report'),
 ]

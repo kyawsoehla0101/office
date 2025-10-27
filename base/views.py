@@ -7,6 +7,7 @@ from datetime import timedelta
 
 def dashboard(request):
     context = {
+        "active_menu": "admin_index",
         "today": timezone.now(),
         "software_count": 8,
         "hardware_count": 4,
@@ -32,6 +33,9 @@ def dashboard(request):
     return render(request, 'pages/admin/dashboard.html', context)
 
 def users(request):
+    context = {
+        "active_menu": "admin_users",
+    }
     # users = User.objects.all().order_by('id')
     # total_users = users.count()
     # total_admins = users.filter(is_superuser=True).count()
@@ -42,7 +46,7 @@ def users(request):
     #     "total_admins": total_admins,
     #     "total_active": total_active,
     # }
-    return render(request, 'pages/admin/users.html')
+    return render(request, 'pages/admin/users.html', context)
 
 # views.py
 from django.shortcuts import render
@@ -53,6 +57,7 @@ def settings(request):
         pass
 
     context = {
+        "active_menu": "admin_settings",
         'system_name': 'Engineering Management Dashboard',
         'organization': 'Software Engineering Team II',
         'theme': 'light',
@@ -61,6 +66,5 @@ def settings(request):
         'weekly_reports': False,
         'min_password_length': 8,
         'session_timeout': 30,
-        'active_menu': 'admin_settings',
     }
     return render(request, 'pages/admin/settings.html', context)

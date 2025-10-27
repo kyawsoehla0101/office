@@ -10,7 +10,7 @@
         <li>
           <a href="{% url 'dashboard' %}"
             class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium 
-                   {% if active_menu == 'admin_home' %}
+                   {% if active_menu == 'admin_index' %}
                      bg-slate-100 text-indigo-600 dark:bg-slate-800 dark:text-indigo-400
                    {% else %}
                      text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800
@@ -64,7 +64,7 @@
         <li>
           <a href="{% url 'set.index' %}"
             class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium 
-                   {% if active_menu == 'set_dashboard' %}bg-slate-100 text-blue-600 dark:bg-slate-800 dark:text-blue-400{% else %}
+                   {% if active_menu == 'set_index' %}bg-slate-100 text-blue-600 dark:bg-slate-800 dark:text-blue-400{% else %}
                    text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800{% endif %}">
             <svg class="h-5 w-5 text-slate-400 group-hover:text-blue-600" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="1.6">
@@ -99,18 +99,20 @@
           </a>
         </li>
         <li>
-          <a href=""
-            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800">
+          <a href="{% url 'set.report' %}"
+            class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium
+                   {% if active_menu == 'set_report' %}bg-slate-100 text-blue-600 dark:bg-slate-800 dark:text-blue-400{% else %}
+                   text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800{% endif %}">
             <svg class="h-5 w-5 text-slate-400 group-hover:text-blue-600" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="1.6">
               <path d="M21 15V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9" />
               <path d="M7 22h10a2 2 0 0 0 2-2v-5H5v5a2 2 0 0 0 2 2z" />
             </svg>
-            Daily Reports
+            Reports
           </a>
         </li>
     <li>
-      <a href=""
+      <a href="{% url 'set.requirements' %}"
         class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium 
                {% if active_menu == 'set_requirements' %}bg-slate-100 text-indigo-600 dark:bg-slate-800 dark:text-indigo-400{% else %}
                text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800{% endif %}">
@@ -133,7 +135,7 @@
         <li>
           <a href="{% url 'het.index' %}"
             class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium 
-                   {% if active_menu == 'het_dashboard' %}bg-slate-100 text-green-600 dark:bg-slate-800 dark:text-green-400{% else %}
+                   {% if active_menu == 'het_index' %}bg-slate-100 text-green-600 dark:bg-slate-800 dark:text-green-400{% else %}
                    text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800{% endif %}">
             <svg class="h-5 w-5 text-slate-400 group-hover:text-green-600" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="1.6">
@@ -201,7 +203,7 @@
           </a>
         </li>
         <li>
-          <a href=""
+          <a href="{% url 'training.students' %}"
             class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium
                    {% if active_menu == 'training_members' %}bg-slate-100 text-amber-600 dark:bg-slate-800 dark:text-amber-400{% else %}
                    text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800{% endif %}">
