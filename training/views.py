@@ -54,4 +54,4 @@ def students(request):
         "active_menu": "training_members",
         "students": students,
     }
-    return render(request, 'pages/training/students.html', context)
+    return render(request, 'pages/training/students/students.html', context)

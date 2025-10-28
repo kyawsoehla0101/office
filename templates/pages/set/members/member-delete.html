@@ -54,22 +54,25 @@
     <h2 class="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">Delete Member</h2>
     <p class="text-slate-500 dark:text-slate-400">
       Are you sure you want to permanently delete
-      <span class="font-semibold text-slate-800 dark:text-slate-200">{{ member.name }}</span>?
+      <span class="font-semibold text-slate-800 dark:text-slate-200">{{ member.full_name }}</span>?
     </p>
   </div>
 
   <!-- Member Info Card -->
   <div class="mt-6 bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 flex items-center gap-4 border border-slate-200 dark:border-slate-700">
-    {% if member.photo %}
-      <img src="{{ member.photo.url }}" alt="Profile" class="h-16 w-16 rounded-full object-cover border border-slate-300 dark:border-slate-600">
-    {% else %}
-      <div class="h-16 w-16 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-500 text-sm">
-        No Image
-      </div>
-    {% endif %}
+
+      <img src="{{ member.profile_photo.url }}" alt="Profile" class="h-40 w-40 rounded-full object-cover border border-slate-300 dark:border-slate-600">
+
     <div>
-      <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">{{ member.name }}</h3>
-      <p class="text-sm text-slate-500 dark:text-slate-400">{{ member.role }} • {{ member.department }}</p>
+      <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">{{ member.full_name }}</h3>
+      <p class="text-sm text-slate-500 dark:text-slate-400">{{ member.reg_no }} • {{ member.get_rank_display }}</p>
+      <p class="text-sm text-slate-500 dark:text-slate-400">{{ member.get_position_display }}</p>
+      <p class="text-sm text-slate-500 dark:text-slate-400">{{ member.get_department_display }}</p>
+      <div class="mt-4">
+        <p class="text-sm text-slate-500 dark:text-slate-400"><span class="font-semibold">Email:</span> {{ member.joined_date }}</p>
+        <p class="text-sm text-slate-500 dark:text-slate-400"><span class="font-semibold">Phone:</span> {{ member.bio }}</p>
+      </div>
+
       {% if member.is_active %}
         <span class="mt-1 inline-block px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full dark:bg-green-800 dark:text-green-200">Active</span>
       {% else %}
@@ -79,7 +82,7 @@
   </div>
 
   <!-- Confirm Delete Form -->
-  <form method="post" class="mt-8">
+  <form method="post" action="{% url 'set.delete-member' member.id %}" class="mt-8">
     {% csrf_token %}
     <p class="text-center text-slate-600 dark:text-slate-400 mb-6">
       This action <span class="font-semibold text-red-600 dark:text-red-400">cannot be undone</span>.

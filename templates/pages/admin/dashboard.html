@@ -6,14 +6,14 @@
   <div class="flex justify-between items-center flex-wrap gap-4">
     <div>
       <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">
-        Welcome, UserName 👋
+        Welcome, {{ request.user.full_name }} 👋
       </h1>
       <p class="text-gray-600 dark:text-gray-400 text-sm">
         Today is {{ today|date:"l, F j, Y" }} — Quick overview of your teams and project health.
       </p>
     </div>
     <div class="bg-blue-50 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-800 rounded-xl px-4 py-2 text-sm text-blue-700 dark:text-blue-300">
-      Logged in as: <strong>Admin</strong>
+      Logged in as: <strong>{{ request.user.get_role_display }}</strong>
     </div>
   </div>
 </div>
@@ -82,6 +82,7 @@
     <h3 class="text-sm text-gray-500 dark:text-gray-400 mb-1">Active Projects</h3>
     <div class="text-3xl font-extrabold text-amber-600 dark:text-amber-400">{{ total_projects|default:18 }}</div>
   </div>
+  
 </div>
 
 <!-- Section: Quick Overview -->

@@ -3,6 +3,8 @@ from django.utils import timezone
 from datetime import timedelta
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
+from set.decorators import set_required
+from set.models import Member
 
 # Create your views here.
 def index(request):
@@ -30,22 +32,33 @@ def index(request):
     return render(request, 'pages/set/index.html', context)
 
 def members(request):
-    members = [
-        {"emp_no": "SE-1001", "name": "Aung Kyaw", "rank": "Backend Developer", "is_active": True},
-        {"emp_no": "SE-1002", "name": "Thandar Hlaing", "rank": "Frontend Developer", "is_active": True},
-        {"emp_no": "SE-1003", "name": "Ko Ko", "rank": "UI/UX Designer", "is_active": False},
-    ]
+    members = Member.objects.all().order_by("department", "position")
+    total_active_members = members.filter(is_active=True).count()
+    total_genders = members.values_list("gender", flat=True).distinct().count()
+    total_male_members = members.filter(gender=Member.GENDER_CHOICES[0][0]).count()
+    total_female_members = members.filter(gender=Member.GENDER_CHOICES[1][0]).count()  
+    total_positions = members.values_list("position", flat=True).distinct().count()
+    total_inactive_members = members.filter(is_active=False).count()    
+
     context = {
         "members": members,
         "total_members": len(members),
         "total_projects": 8,
         "total_departments": 2,
+        "total_active_members": total_active_members,
+        "total_genders": total_genders,
+        "total_male_members": total_male_members,
+        "total_female_members": total_female_members,
+        "total_positions": total_positions,
+        "total_inactive_members": total_inactive_members,
         "active_menu": "set_members",
     }
-    return render(request, 'pages/set/members.html', context)
+    return render(request, 'pages/set/members/members.html', context)
 
 def addReport(request):
-    return render(request, 'pages/set/add-report.html')
+    return render(request, 'pages/set/add-report.html', {
+        "active_menu": "set_report"
+    })    
 
 def projects(request):
     projects = [
@@ -58,27 +71,107 @@ def projects(request):
         "total_projects": len(projects),
         "active_menu": "set_projects",
     }
-    return render(request, 'pages/set/projects.html', context)
+    return render(request, 'pages/set/projects/projects.html', context)
 
+@set_required
 def addMember(request):
+    positions = Member.POSITION_CHOICES
+    ranks = Member.RANK_CHOICES
+    genders = Member.GENDER_CHOICES
     context = {
-        "active_menu": "set_add_member",
+        "active_menu": "set_members",
+        "positions": positions,
+        "ranks": ranks, 
+        "genders": genders,
+    } 
+    if request.method == "POST":
+        reg_no = request.POST.get("reg_no")
+        full_name = request.POST.get("full_name")
+        position = request.POST.get("position")
+        joined_date = request.POST.get("joined_date")
+        position = request.POST.get("position")
+        bio = request.POST.get("bio")
+        profile_photo = request.FILES.get("profile_photo")
+        rank = request.POST.get("rank")
+        gender = request.POST.get("gender")
+        birth_date = request.POST.get("birth_date")
+        # if not profile_photo:
+        #     messages.error(request, "Profile photo is required.")
+        #     return redirect("set.add_member")
+            
+
+
+        # Auto assign department from user role
+        department = request.user.role.upper()  # e.g. "set" → "SET"
+
+        Member.objects.create(
+            reg_no=reg_no,
+            full_name=full_name,
+            position=position,
+            joined_date=joined_date,
+            department=department,
+            user=request.user,
+            bio=bio,
+            profile_photo=profile_photo,
+            rank=rank,
+            gender=gender,
+            birth_date=birth_date,
+        )
+        
+        messages.success(request, f"Member '{full_name}' added to {department} team.")
+        return redirect("set.members")
+
+    return render(request, "pages/set/members/add-member.html", context)
+
+@set_required
+def editMember(request, id):
+    member = get_object_or_404(Member, id=id)
+    if request.method == "POST":
+        member.full_name = request.POST.get("full_name")
+        member.reg_no = request.POST.get("reg_no")
+        member.rank = request.POST.get("rank")
+        member.position = request.POST.get("position")
+        member.joined_date = request.POST.get("joined_date")
+        member.bio = request.POST.get("bio")
+        member.gender = request.POST.get("gender")
+        member.birth_date = request.POST.get("birth_date")
+        member.is_active = bool(request.POST.get("is_active"))
+
+        if request.FILES.get("profile_photo"):
+            member.profile_photo = request.FILES["profile_photo"]
+
+        member.save()
+        messages.success(request, f"Member '{member.full_name}' updated successfully!")
+        return redirect("set.members")
+
+    context = {
+        "active_menu": "set_members",
+        "member": member,
+        "ranks": Member.RANK_CHOICES,
+        "positions": Member.POSITION_CHOICES,
+        "genders": Member.GENDER_CHOICES,
     }
-    return render(request, 'pages/set/add-member.html', context)
+    return render(request, "pages/set/members/edit-member.html", context)
 
-def editMember(request):
-    return render(request, 'pages/set/edit-member.html')
+def memberDetail(request, id):
+    member = get_object_or_404(Member, id=id)
+    context = {
+        "active_menu": "set_members",
+        "member": member,
+    }
+    return render(request, 'pages/set/members/member-detail.html', context) 
 
-def memberDetail(request):
-    return render(request, 'pages/set/member-detail.html')
-
-def deleteMember(request):
-    # member = get_object_or_404(Member, id=id)
-    # if request.method == "POST":
-    #     member.delete()
-    #     messages.success(request, f"Member '{member.name}' deleted successfully.")
-    #     return redirect('set.members')
-    return render(request, 'pages/set/member-delete.html')
+def deleteMember(request,id):
+    member = get_object_or_404(Member, id=id)
+    context = {
+        "active_menu": "set_members",
+        "member": member,
+    }
+    if request.method == "POST":
+        member.delete()
+        messages.success(request, f"Member '{member.full_name}' deleted successfully.")
+        return redirect('set.members')
+    return render(request, 'pages/set/members/member-delete.html', context)
 
 def requirements(request):
     requirements = [
@@ -115,7 +208,7 @@ def requirements(request):
             "created_at": timezone.now() - timedelta(days=4),
         },
     ]
-    return render(request, "pages/set/requirements.html", {
+    return render(request, "pages/set/requirements/requirements.html", {
         "requirements": requirements,
         "active_menu": "set_requirements"
     })
@@ -135,7 +228,7 @@ def addRequirement(request):
         messages.success(request, "Requirement submitted successfully.")
         return redirect("set.requirements")
 
-    return render(request, "pages/set/add-requirement.html", {
+    return render(request, "pages/set/requirements/add-requirement.html", {
         "active_menu": "set_requirements"
     })
 
@@ -150,3 +243,47 @@ def report(request):
         "active_menu": "set_report",
     }
     return render(request, "pages/set/report.html", context)
+
+def addProject(request):
+    return render(request, 'pages/set/projects/add-project.html', {
+        "active_menu": "set_projects"
+    })
+
+
+def editProject(request):
+    # project = get_object_or_404(Project, id=id)
+    # if request.method == "POST":
+    #     project.title = request.POST.get("title")
+    #     project.description = request.POST.get("description")
+    #     project.lead = request.POST.get("lead")
+    #     project.save()
+    #     messages.success(request, f"Project '{project.title}' updated successfully.")
+    #     return redirect("set.projects")
+    return render(request, "pages/set/projects/edit-project.html", {
+        # "project": project,
+        "active_menu": "set_projects"
+    })
+
+def detailProject(request):
+    # project = get_object_or_404(Project, id=id)
+    projects = [
+        {"id": 1, "title": "Project 1", "description": "Description for Project 1", "start_date": timezone.now() - timedelta(days=10), "deadline": timezone.now() - timedelta(days=1), "lead": "Aung Kyaw"},
+        {"id": 2, "title": "Project 2", "description": "Description for Project 2", "start_date": timezone.now() - timedelta(days=5), "deadline": timezone.now() - timedelta(days=2), "lead": "Thandar Hlaing"},
+        {"id": 3, "title": "Project 3", "description": "Description for Project 3", "start_date": timezone.now() - timedelta(days=2), "deadline": timezone.now(), "lead": "Ko Ko"},
+    ]
+    project = projects[0]
+    return render(request, "pages/set/projects/project-detail.html", {
+        "project": project,
+        "active_menu": "set_projects"
+    })
+
+def deleteProject(request):
+   
+    # if request.method == "POST":
+    #     project = [p for p in project if p["id"] != int(id)]
+    #     messages.success(request, f"Project '{project.title}' deleted successfully.")
+    #     return redirect("set.projects")
+    return render(request, "pages/set/projects/project-delete.html", {
+        # "project": project,
+        "active_menu": "set_projects"
+    })

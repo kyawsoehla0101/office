@@ -40,4 +40,78 @@ def members(request):
         "total_departments": 2,
         "active_menu": "het_members",
     }
-    return render(request, "pages/het/members.html", context)
+    return render(request, "pages/het/members/members.html", context)
+def requirements(request):
+    requirements = [
+        {
+            "title": "Requirement 1",
+            "description": "Description for Requirement 1",
+            "submitted_by": "Aung Kyaw",
+            "number" : "REQ-001",
+            "team" : "Hardware Engineering Team",
+            "created_at": timezone.now() - timedelta(days=1),
+        },
+        {
+            "title": "Requirement 2",
+            "description": "Description for Requirement 2",
+            "submitted_by": "Thandar Hlaing",
+            "number" : "REQ-002",   
+            "team" : "Hardware Engineering Team",
+            "created_at": timezone.now() - timedelta(days=2),
+        },
+        {
+            "title": "Requirement 3",
+            "description": "Description for Requirement 3",
+            "submitted_by": "Ko Ko",
+            "number" : "REQ-003",
+            "team" : "Hardware Engineering Team",
+            "created_at": timezone.now() - timedelta(days=3),
+        },
+        {
+            "title": "Requirement 4",
+            "description": "Description for Requirement 4",
+            "submitted_by": "Ko Ko",
+            "number" : "REQ-004",
+            "team" : "Hardware Engineering Team",
+            "created_at": timezone.now() - timedelta(days=4),
+        },
+    ]
+    return render(request, "pages/het/requirements/requirements.html", {
+        "requirements": requirements,
+        "active_menu": "het_requirements"   
+    })
+
+def addRequirement(request):
+    if request.method == "POST":
+        title = request.POST.get("title")
+        desc = request.POST.get("description")
+        file = request.FILES.get("attachment")
+        Requirement.objects.create(
+            title=title,
+            description=desc,
+            submitted_by=request.user,
+            attachment=file,
+            status="pending",
+        )
+        messages.success(request, "Requirement submitted successfully.")
+        return redirect("het.requirements")
+
+    return render(request, "pages/het/requirements/add-requirement.html", {
+        "active_menu": "het_requirements"
+    })
+
+def report(request):
+    reports = [
+        {"title": "Report 1", "department": "Software Engineering Team", "author": "Aung Kyaw", "created_at": timezone.now() - timedelta(days=1)},
+        {"title": "Report 2", "department": "Software Engineering Team", "author": "Thandar Hlaing", "created_at": timezone.now() - timedelta(days=2)},
+        {"title": "Report 3", "department": "Software Engineering Team", "author": "Ko Ko", "created_at": timezone.now() - timedelta(days=3)},
+    ]
+    context = {
+        "reports": reports,
+        "active_menu": "het_reports",
+    }
+    return render(request, "pages/het/reports/report.html", context)
+def addReport(request):
+    return render(request, 'pages/het/reports/add-report.html', {
+        "active_menu": "het_reports"
+    })

@@ -55,7 +55,13 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'office.urls'
+# settings.py
+AUTH_USER_MODEL = "accounts.CustomUser"
 
+LOGIN_URL = "login"
+LOGOUT_REDIRECT_URL = "login"
+
+LOGIN_REDIRECT_URL = "post_login_redirect"
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -75,7 +81,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'office.wsgi.application'
 
-
+AUTHENTICATION_BACKENDS = [
+    "accounts.backends.EmailOrUsernameBackend",  # our custom backend
+    "django.contrib.auth.backends.ModelBackend", # default
+]
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
@@ -122,7 +131,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
-
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 

@@ -50,18 +50,26 @@
   </div>
 
   <!-- Stats -->
-  <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+  <div class="grid grid-cols-1 sm:grid-cols-5 gap-6 mb-8">
     <div class="bg-blue-50 dark:bg-slate-800 rounded-2xl p-5 text-center border border-blue-100 dark:border-slate-700">
       <p class="text-sm text-slate-500 dark:text-slate-400">Total Members</p>
       <p class="text-3xl font-bold text-blue-700 dark:text-blue-400">{{ total_members|default:42 }}</p>
     </div>
     <div class="bg-blue-50 dark:bg-slate-800 rounded-2xl p-5 text-center border border-blue-100 dark:border-slate-700">
-      <p class="text-sm text-slate-500 dark:text-slate-400">Active Projects</p>
-      <p class="text-3xl font-bold text-blue-700 dark:text-blue-400">{{ total_projects|default:15 }}</p>
+      <p class="text-sm text-slate-500 dark:text-slate-400">Male Members</p>
+      <p class="text-3xl font-bold text-blue-700 dark:text-blue-400">{{ total_male_members|default:0 }}</p>
     </div>
     <div class="bg-blue-50 dark:bg-slate-800 rounded-2xl p-5 text-center border border-blue-100 dark:border-slate-700">
-      <p class="text-sm text-slate-500 dark:text-slate-400">Departments</p>
-      <p class="text-3xl font-bold text-blue-700 dark:text-blue-400">{{ total_departments|default:3 }}</p>
+      <p class="text-sm text-slate-500 dark:text-slate-400">Female Members</p>
+      <p class="text-3xl font-bold text-blue-700 dark:text-blue-400">{{ total_female_members|default:0 }}</p>
+    </div>
+    <div class="bg-blue-50 dark:bg-slate-800 rounded-2xl p-5 text-center border border-blue-100 dark:border-slate-700">
+      <p class="text-sm text-slate-500 dark:text-slate-400">Active Members</p>
+      <p class="text-3xl font-bold text-blue-700 dark:text-blue-400">{{ total_active_members|default:30 }}</p>
+    </div>
+    <div class="bg-blue-50 dark:bg-slate-800 rounded-2xl p-5 text-center border border-blue-100 dark:border-slate-700">
+      <p class="text-sm text-slate-500 dark:text-slate-400">Positions</p>
+      <p class="text-3xl font-bold text-blue-700 dark:text-blue-400">{{ total_positions|default:3 }}</p>
     </div>
   </div>
 
@@ -71,8 +79,11 @@
       <thead class="text-xs uppercase bg-blue-100 dark:bg-slate-800 text-blue-900 dark:text-blue-400">
         <tr>
           <th class="py-3 px-6">No</th>
-          <th class="py-3 px-6">Employee ID</th>
+          <th class="py-3 px-6">Profile Photo</th>
+          <th class="py-3 px-6">Reg ID</th>
+          <th class="py-3 px-6">Rank</th>
           <th class="py-3 px-6">Name</th>
+          <th class="py-3 px-6">Birth Date</th>
           <th class="py-3 px-6">Position</th>
           <th class="py-3 px-6">Status</th>
           <th class="py-3 px-6">Actions</th>
@@ -82,9 +93,14 @@
         {% for member in members %}
         <tr class="relative bg-white border-b dark:bg-slate-900 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
           <td class="py-4 px-6">{{ forloop.counter }}</td>
-          <td class="py-4 px-6">{{ member.emp_no }}</td>
-          <td class="py-4 px-6 font-medium">{{ member.name }}</td>
-          <td class="py-4 px-6">{{ member.rank }}</td>
+          <td class="py-4 px-6">
+            <img src="{{ member.get_profile_photo_url|default:'/static/profile/default-profile.png' }}" alt="{{ member.full_name }}" class="w-12 h-12 rounded-full">
+          </td>
+          <td class="py-4 px-6">{{ member.reg_no|default:"-" }}</td>
+          <td class="py-4 px-6">{{ member.get_rank_display|default:"Civilian" }}</td>
+          <td class="py-4 px-6 font-medium">{{ member.full_name }}</td>
+          <td class="py-4 px-6">{{ member.birth_date|default:"-" }}</td>
+          <td class="py-4 px-6">{{ member.get_position_display }}</td>
           <td class="py-4 px-6">
             <span class="px-3 py-1 rounded-full text-xs 
               {% if member.is_active %}
@@ -105,13 +121,13 @@
 
   <div
     class="fixed hidden group-hover:block right-10 bg-white rounded-md shadow-lg ring-1 ring-black/5 dark:bg-slate-800 w-44 z-[9999] transition-all duration-150">
-    <a href="{% url 'set.edit-member' %}" class="block px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center">
+    <a href="{% url 'set.edit-member' member.id %}" class="block px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center">
       Edit
     </a>
-    <a href="{% url 'set.delete-member' %}" class="block px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center">
+    <a href="{% url 'set.delete-member' member.id %}" class="block px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center">
       Delete
     </a>
-    <a href="{% url 'set.member-detail'%}" class="block px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center">
+    <a href="{% url 'set.member-detail' member.id %}" class="block px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center">
       View Details
     </a>
     <a href="{% url 'set.add-report' %}" class="block px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center">

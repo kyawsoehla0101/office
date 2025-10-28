@@ -4,7 +4,12 @@ from datetime import timedelta
 # from django.contrib.auth import get_user_model
 
 # User = get_user_model()
+from django.contrib.auth.decorators import login_required
+from accounts.decorators import admin_required
+from accounts.models import CustomUser
 
+@login_required(login_url="/")
+@admin_required
 def dashboard(request):
     context = {
         "active_menu": "admin_index",
@@ -32,9 +37,23 @@ def dashboard(request):
     }
     return render(request, 'pages/admin/dashboard.html', context)
 
+@login_required(login_url="/")
+@admin_required
 def users(request):
+    users = CustomUser.objects.all().order_by('id')
+    total_users = len(users)
+    total_admins = sum(1 for user in users if user.role == "admin")
+    
+    total_active = sum(1 for user in users if user.is_active)
+    total_inactive = total_users - total_active
+
     context = {
+        "total_users": total_users, 
+        "total_admins": total_admins,
+        "total_active": total_active,   
+        "total_inactive": total_inactive,
         "active_menu": "admin_users",
+        "users": users,
     }
     # users = User.objects.all().order_by('id')
     # total_users = users.count()
