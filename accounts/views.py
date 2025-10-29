@@ -1,14 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from django.template import context
-from django.urls import reverse
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required, user_passes_test
-from .decorators import admin_required
+from django.contrib.auth.decorators import login_required
+from accounts.utils.decorators import role_required
 from .models import CustomUser
 
 
@@ -48,7 +45,7 @@ def logout_view(request):
     return redirect("login")
 
 @login_required(login_url="login")
-@admin_required
+@role_required("admin")
 def add_user(request):
     roles = CustomUser.ROLE_CHOICES
     form_data = request.POST or None
@@ -97,7 +94,7 @@ def add_user(request):
     return render(request, "pages/admin/add-user.html", context)
 
 @login_required(login_url="login")
-@admin_required
+@role_required("admin")
 def edit_user(request, user_id):
     user = get_object_or_404(CustomUser, id=user_id)
     roles = CustomUser.ROLE_CHOICES
@@ -114,7 +111,7 @@ def edit_user(request, user_id):
     return render(request, "pages/admin/edit-user.html", {"user": user, "roles": roles})
 
 @login_required(login_url="login")
-@admin_required
+@role_required("admin")
 def delete_user(request, user_id):
     """Only admin can delete users"""
     user = get_object_or_404(CustomUser, id=user_id)
@@ -127,7 +124,7 @@ def delete_user(request, user_id):
     return render(request, "pages/admin/delete-user.html", {"user": user})
 
 @login_required(login_url="login")
-@admin_required
+@role_required("admin")
 def change_user_password(request, user_id):
     user = get_object_or_404(CustomUser, id=user_id)
 

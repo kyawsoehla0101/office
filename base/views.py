@@ -1,15 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib import messages
 from django.utils import timezone
 from datetime import timedelta
-# from django.contrib.auth import get_user_model
-
-# User = get_user_model()
 from django.contrib.auth.decorators import login_required
-from accounts.decorators import admin_required
+from accounts.utils.decorators import role_required
 from accounts.models import CustomUser
+from base.models import SystemSettings
+
+
 
 @login_required(login_url="/")
-@admin_required
+@role_required("admin")
 def dashboard(request):
     context = {
         "active_menu": "admin_index",
@@ -38,7 +39,7 @@ def dashboard(request):
     return render(request, 'pages/admin/dashboard.html', context)
 
 @login_required(login_url="/")
-@admin_required
+@role_required("admin")
 def users(request):
     users = CustomUser.objects.all().order_by('id')
     total_users = len(users)
@@ -67,23 +68,36 @@ def users(request):
     # }
     return render(request, 'pages/admin/users.html', context)
 
-# views.py
-from django.shortcuts import render
+@login_required(login_url="/")
+@role_required("admin")
+def admin_settings(request):
+    # Settings record တစ်ခုမရှိရင် auto create
+    settings_obj, created = SystemSettings.objects.get_or_create(id=1)
 
-def settings(request):
-    if request.method == 'POST':
-        # handle form save logic here
-        pass
+    if request.method == "POST":
+        # POST data ထဲက values ကို update
+        settings_obj.system_name = request.POST.get("system_name", settings_obj.system_name)
+        settings_obj.organization = request.POST.get("organization", settings_obj.organization)
 
+        settings_obj.email_notifications = "email_notifications" in request.POST
+        settings_obj.system_warnings = "system_warnings" in request.POST
+        settings_obj.weekly_reports = "weekly_reports" in request.POST
+
+        settings_obj.session_timeout = int(request.POST.get("session_timeout", 30))
+
+        settings_obj.save()
+
+        messages.success(request, "✅ Settings saved successfully!")
+        return redirect("admin.settings")
+
+    # GET request → form values show
     context = {
+        "system_name": settings_obj.system_name,
+        "organization": settings_obj.organization,
+        "email_notifications": settings_obj.email_notifications,
+        "system_warnings": settings_obj.system_warnings,
+        "weekly_reports": settings_obj.weekly_reports,
+        "session_timeout": settings_obj.session_timeout,
         "active_menu": "admin_settings",
-        'system_name': 'Engineering Management Dashboard',
-        'organization': 'Software Engineering Team II',
-        'theme': 'light',
-        'email_notifications': True,
-        'system_warnings': True,
-        'weekly_reports': False,
-        'min_password_length': 8,
-        'session_timeout': 30,
     }
-    return render(request, 'pages/admin/settings.html', context)
+    return render(request, "pages/admin/settings.html", context)

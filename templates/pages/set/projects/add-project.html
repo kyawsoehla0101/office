@@ -22,7 +22,8 @@
               d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
               clip-rule="evenodd" />
           </svg>
-          <a href="{% url 'set.projects' %}" class="ml-1 text-sm font-medium text-slate-700 hover:text-indigo-600 md:ml-2 dark:text-slate-300 dark:hover:text-indigo-400">
+          <a href="{% url 'set.projects' %}"
+            class="ml-1 text-sm font-medium text-slate-700 hover:text-indigo-600 md:ml-2 dark:text-slate-300 dark:hover:text-indigo-400">
             Projects
           </a>
         </div>
@@ -49,39 +50,52 @@
   </div>
 
   <!-- Project Form -->
-  <form action="" method="post" enctype="multipart/form-data" class="space-y-6">
+  <form action="{% url 'set.add-project' %}" method="post" enctype="multipart/form-data" class="space-y-6">
     {% csrf_token %}
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
       <!-- Project Title -->
       <div class="sm:col-span-2">
         <label for="title" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Project Title</label>
-        <input type="text" id="title" name="title" required
-          placeholder="e.g. Job Portal Development"
+        <input type="text" id="title" name="title" required placeholder="e.g. Job Portal Development"
           class="mt-2 w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none">
       </div>
 
-      <!-- Category -->
+      <!-- Team Lead -->
       <div>
-        <label for="category" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Category</label>
-        <select id="category" name="category" required
+        <label for="lead" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Team Lead</label>
+        <select id="lead" name="lead" required
           class="mt-2 w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none">
-          <option value="">Select Category</option>
-          <option value="Software Engineering">Software Engineering</option>
-          <option value="Hardware Engineering">Hardware Engineering</option>
-          <option value="School Project">School Project</option>
+          {% for member in members %}
+          <option value="{{ member.id }}">{{ member.full_name }} ( {{member.get_position_display}} )</option>
+          {% endfor %}
         </select>
       </div>
-
       <!-- Status -->
       <div>
         <label for="status" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Status</label>
-        <select id="status" name="status"
+        <select id="status" name="status" required
           class="mt-2 w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none">
-          <option value="ongoing">Ongoing</option>
-          <option value="completed">Completed</option>
-          <option value="pending">Pending</option>
+          {% for status in statuses %}
+          <option value="{{ status.0 }}">{{ status.1 }}</option>
+          {% endfor %}
         </select>
       </div>
+      <!-- Members -->
+      <div class="sm:col-span-2">
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+          Select Members
+        </label>
+        <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-2">
+          {% for u in members %}
+          <label class="flex items-center space-x-2">
+            <input type="checkbox" name="members" value="{{ u.id }}"
+              class="rounded text-indigo-600 focus:ring-indigo-500">
+            <span class="text-sm text-slate-700 dark:text-slate-300">{{ u.full_name }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
 
       <!-- Start Date -->
       <div>
@@ -96,17 +110,28 @@
         <input type="date" id="deadline" name="deadline"
           class="mt-2 w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none">
       </div>
-
+      <!-- Priority -->
+      <div>
+        <label for="priority" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Priority</label>
+        <select id="priority" name="priority" required
+          class="mt-2 w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none">
+          {% for priority in priorities %}
+          <option value="{{ priority.0 }}">{{ priority.1 }}</option>
+          {% endfor %}
+        </select>
+      </div>
       <!-- File Upload -->
-      <div class="sm:col-span-2">
-        <label for="document" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Project Document (optional)</label>
-        <input type="file" id="document" name="document"
+      <div class="sm:col-span-1">
+        <label for="document" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Project Document
+          (optional)</label>
+        <input type="file" id="document" name="document" accept=".pdf,.docx,.doc,.txt"
           class="mt-2 block w-full text-sm text-slate-600 dark:text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-slate-800 dark:file:text-indigo-400">
       </div>
 
       <!-- Description -->
       <div class="sm:col-span-2">
-        <label for="description" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Description</label>
+        <label for="description"
+          class="block text-sm font-medium text-slate-700 dark:text-slate-300">Description</label>
         <textarea id="description" name="description" rows="4" required
           placeholder="Describe project objectives, scope, and goals..."
           class="mt-2 w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 text-slate-900 dark:text-slate-100 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none"></textarea>

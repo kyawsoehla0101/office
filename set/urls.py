@@ -14,7 +14,7 @@ urlpatterns = [
     path('add-requirement/', views.addRequirement, name='set.add-requirement'),
     path('report/', views.report, name='set.report'),
     path('add-project/', views.addProject, name='set.add-project'),
-    path('edit-project/', views.editProject, name='set.edit-project'),
-    path('project-detail/', views.detailProject, name='set.project-detail'),
-    path('delete-project/', views.deleteProject, name='set.delete-project'),
+    path('edit-project/<uuid:id>/', views.editProject, name='set.edit-project'),
+    path('project-detail/<uuid:id>/', views.detailProject, name='set.project-detail'),
+    path('delete-project/<uuid:id>/', views.deleteProject, name='set.delete-project'),
 ]

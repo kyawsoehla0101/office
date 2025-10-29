@@ -1,10 +1,14 @@
-from django.shortcuts import render
+from django.contrib import messages
+from django.shortcuts import render,redirect,get_object_or_404
 from django.utils import timezone
 from datetime import timedelta
+from .models import Member
+from accounts.utils.decorators import role_required
 
 
 
-# Create your views here.
+# Dashboard View
+@role_required("het")
 def dashboard(request):
     context = {
         "active_menu": "het_index",
@@ -27,20 +31,117 @@ def dashboard(request):
     }
     return render(request, 'pages/het/index.html', context)
 
+# Members View
+@role_required("het", "admin")
 def members(request):
-    members = [
-        {"emp_no": "HW-1001", "name": "Myo Myo", "rank": "Engineer", "is_active": True},
-        {"emp_no": "HW-1002", "name": "Aung Aung", "rank": "Technician", "is_active": False},
-        {"emp_no": "HW-1003", "name": "Nyein Nyein", "rank": "Supervisor", "is_active": True},
-    ]
+    members = Member.objects.all()
     context = {
-        "members": members,
-        "total_members": len(members),
-        "total_projects": 5,
-        "total_departments": 2,
         "active_menu": "het_members",
+        "members": members,
     }
-    return render(request, "pages/het/members/members.html", context)
+    return render(request, 'pages/het/members/members.html', context)
+
+# Add Member View
+@role_required("het", "admin")
+def addMember(request):
+    positions = Member.POSITION_CHOICES
+    ranks = Member.RANK_CHOICES
+    genders = Member.GENDER_CHOICES
+    context = {
+        "active_menu": "het_members",
+        "positions": positions,
+        "ranks": ranks, 
+        "genders": genders,
+    } 
+    if request.method == "POST":
+        reg_no = request.POST.get("reg_no")
+        full_name = request.POST.get("full_name")
+        position = request.POST.get("position")
+        joined_date = request.POST.get("joined_date")
+        position = request.POST.get("position")
+        bio = request.POST.get("bio")
+        profile_photo = request.FILES.get("profile_photo")
+        rank = request.POST.get("rank")
+        gender = request.POST.get("gender")
+        birth_date = request.POST.get("birth_date")     
+        # Auto assign department from user role
+        department = request.user.role.upper()  # e.g. "set" → "SET"
+
+        Member.objects.create(
+            reg_no=reg_no,
+            full_name=full_name,
+            position=position,
+            joined_date=joined_date,
+            department=department,
+            user=request.user,
+            bio=bio,
+            profile_photo=profile_photo,
+            rank=rank,
+            gender=gender,
+            birth_date=birth_date,
+        )
+        
+        messages.success(request, f"Member '{full_name}' added to {department} team.")
+        return redirect("het.members")
+
+    return render(request, "pages/het/members/add-member.html", context)
+
+# Edit Member View
+@role_required("het")
+def editMember(request, id):
+    member = get_object_or_404(Member, id=id)
+    if request.method == "POST":
+        member.full_name = request.POST.get("full_name")
+        member.reg_no = request.POST.get("reg_no")
+        member.rank = request.POST.get("rank")
+        member.position = request.POST.get("position")
+        member.joined_date = request.POST.get("joined_date")
+        member.bio = request.POST.get("bio")
+        member.gender = request.POST.get("gender")
+        member.birth_date = request.POST.get("birth_date")
+        member.is_active = bool(request.POST.get("is_active"))
+
+        if request.FILES.get("profile_photo"):
+            member.profile_photo = request.FILES["profile_photo"]
+
+        member.save()
+        messages.success(request, f"Member '{member.full_name}' updated successfully!")
+        return redirect("set.members")
+
+    context = {
+        "active_menu": "set_members",
+        "member": member,
+        "ranks": Member.RANK_CHOICES,
+        "positions": Member.POSITION_CHOICES,
+        "genders": Member.GENDER_CHOICES,
+    }
+    return render(request, "pages/set/members/edit-member.html", context)
+
+# Member Detail View
+@role_required("het", "admin")
+def memberDetail(request, id):
+    member = get_object_or_404(Member, id=id)
+    context = {
+        "active_menu": "het_members",
+        "member": member,
+    }
+    return render(request, 'pages/het/members/member-detail.html', context) 
+
+# Delete Member View
+@role_required("het")   
+def deleteMember(request,id):
+    member = get_object_or_404(Member, id=id)
+    context = {
+        "active_menu": "het_members",
+        "member": member,
+    }
+    if request.method == "POST":
+        member.delete()
+        messages.success(request, f"Member '{member.full_name}' deleted successfully.")
+        return redirect('het.members')
+    return render(request, 'pages/het/members/member-delete.html', context)
+
+
 def requirements(request):
     requirements = [
         {

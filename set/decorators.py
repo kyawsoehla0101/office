@@ -1,4 +1,4 @@
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.contrib import messages
 from functools import wraps
 
@@ -14,9 +14,9 @@ def set_required(view_func):
             messages.warning(request, "Please log in first.")
             return redirect("login")
 
-        if user.role != "set" and not user.is_superuser:
+        if user.role != "set":
             messages.error(request, "You are not authorized to access this page.")
-            return redirect("access_denied")
+            return render(request, "pages/admin/access-denied.html")
 
         return view_func(request, *args, **kwargs)
     return wrapper

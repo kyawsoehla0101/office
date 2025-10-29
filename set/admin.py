@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Member
+from .models import Member, Project
 
 @admin.register(Member)
 class MemberAdmin(admin.ModelAdmin):
@@ -7,3 +7,11 @@ class MemberAdmin(admin.ModelAdmin):
     list_filter = ("position", "is_active")
     search_fields = ("full_name", "position")
     ordering = ("-joined_date",)
+
+
+@admin.register(Project)
+class ProjectAdmin(admin.ModelAdmin):
+    list_display = ("title", "status", "priority", "team_lead", "created_by", "created_at")
+    list_filter = ("status", "priority")
+    search_fields = ("title", "description")
+    filter_horizontal = ("members",)

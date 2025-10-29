@@ -4,9 +4,12 @@ from datetime import timedelta
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from set.decorators import set_required
-from set.models import Member
+from django.contrib.auth.decorators import login_required
+from set.models import Member, Project
+from accounts.utils.decorators import role_required
 
-# Create your views here.
+# SET Index View
+@role_required("set")
 def index(request):
     context = {
         "active_menu": "set_index",
@@ -30,7 +33,8 @@ def index(request):
         ]
     }
     return render(request, 'pages/set/index.html', context)
-
+@login_required(login_url="login")
+@role_required("set", "admin")
 def members(request):
     members = Member.objects.all().order_by("department", "position")
     total_active_members = members.filter(is_active=True).count()
@@ -61,19 +65,40 @@ def addReport(request):
     })    
 
 def projects(request):
-    projects = [
-        {"name": "JobSeeker Portal", "lead": "Aung Kyaw", "progress": 85, "last_commit": timezone.now()},
-        {"name": "Quick Chat App", "lead": "May Thazin", "progress": 70, "last_commit": timezone.now() - timedelta(hours=2)},
-        {"name": "Resume Builder", "lead": "Min Htet", "progress": 95, "last_commit": timezone.now() - timedelta(hours=5)},
-    ]
+    projects = Project.objects.all().order_by("status", "priority")
+    total_projects = len(projects)
+    total_active_projects = projects.filter(status=Project.STATUS_CHOICES[0][0]).count()
+    total_inactive_projects = projects.filter(status=Project.STATUS_CHOICES[1][0]).count()
+    total_planning_projects = projects.filter(status=Project.STATUS_CHOICES[0][0]).count()
+    total_completed_projects = projects.filter(status=Project.STATUS_CHOICES[2][0]).count()
+    total_ongoing_projects = projects.filter(status=Project.STATUS_CHOICES[1][0]).count()
+    total_on_hold_projects = projects.filter(status=Project.STATUS_CHOICES[3][0]).count()
+    total_cancelled_projects = projects.filter(status=Project.STATUS_CHOICES[4][0]).count()
+    total_priorities = projects.values_list("priority", flat=True).distinct().count()
+    total_low_priority_projects = projects.filter(priority=Project.PRIORITY_CHOICES[0][0]).count()
+    total_medium_priority_projects = projects.filter(priority=Project.PRIORITY_CHOICES[1][0]).count()
+    total_high_priority_projects = projects.filter(priority=Project.PRIORITY_CHOICES[2][0]).count()
+
+
     context = {
         "projects": projects,
-        "total_projects": len(projects),
+        "total_projects": total_projects,
+        "total_active_projects": total_active_projects,
+        "total_inactive_projects": total_inactive_projects,
+        "total_planning_projects": total_planning_projects,
+        "total_completed_projects": total_completed_projects,
+        "total_ongoing_projects": total_ongoing_projects,
+        "total_priorities": total_priorities,
+        "total_low_priority_projects": total_low_priority_projects,
+        "total_medium_priority_projects": total_medium_priority_projects,
+        "total_high_priority_projects": total_high_priority_projects,
+        "total_on_hold_projects": total_on_hold_projects,
+        "total_cancelled_projects": total_cancelled_projects,
         "active_menu": "set_projects",
     }
     return render(request, 'pages/set/projects/projects.html', context)
 
-@set_required
+@role_required("set")
 def addMember(request):
     positions = Member.POSITION_CHOICES
     ranks = Member.RANK_CHOICES
@@ -160,7 +185,7 @@ def memberDetail(request, id):
         "member": member,
     }
     return render(request, 'pages/set/members/member-detail.html', context) 
-
+@set_required
 def deleteMember(request,id):
     member = get_object_or_404(Member, id=id)
     context = {
@@ -242,48 +267,99 @@ def report(request):
         "reports": reports,
         "active_menu": "set_report",
     }
-    return render(request, "pages/set/report.html", context)
+    return render(request, "pages/set/reports/report.html", context)
 
 def addProject(request):
-    return render(request, 'pages/set/projects/add-project.html', {
-        "active_menu": "set_projects"
-    })
+    members = Member.objects.all()
+    statuses = Project.STATUS_CHOICES
+    priorities = Project.PRIORITY_CHOICES   
+
+    context = {
+        "members": members,
+        "statuses": statuses,   
+        "active_menu": "set_projects",
+        "priorities": priorities,
+    }
+    if request.method == "POST":
+        title = request.POST.get("title")
+        desc = request.POST.get("description")
+        document = request.FILES.get("document")
+        priority = request.POST.get("priority")
+        start_date = request.POST.get("start_date")
+        deadline = request.POST.get("deadline")
+        team_lead_id = request.POST.get("lead")
+        member_ids = request.POST.getlist("members")
+        status = request.POST.get("status")
+        document = request.FILES.get("document")
+
+        project  = Project.objects.create(
+            title=title,
+            description=desc,
+            created_by=request.user,
+            status=status,
+            project_document=document,
+            priority=priority,
+            start_date=start_date,
+            deadline=deadline,
+        )
+
+        # ✅ team_lead assign
+        if team_lead_id:
+            try:
+                project.team_lead = Member.objects.get(id=team_lead_id)
+            except Member.DoesNotExist:
+                pass
+            project.save()
+
+        # ✅ members assign (ManyToMany)
+        if member_ids:
+            project.members.set(member_ids)
+        messages.success(request, "Project submitted successfully.")
+        return redirect("set.projects")
+    return render(request, 'pages/set/projects/add-project.html', context)
 
 
-def editProject(request):
+def editProject(request, id):
+    context = {
+        "active_menu": "set_projects",
+        "priorities": Project.PRIORITY_CHOICES,
+        "statuses": Project.STATUS_CHOICES,
+        "members": Member.objects.all(),
+    }
+    project = get_object_or_404(Project, id=id)
+    if request.method == "POST":
+        project.title = request.POST.get("title")
+        project.description = request.POST.get("description")
+        project.lead = request.POST.get("lead")
+        project.priority = request.POST.get("priority")
+        project.start_date = request.POST.get("start_date")
+        project.deadline = request.POST.get("deadline")
+        project.members.set(request.POST.getlist("members"))
+        project.status = request.POST.get("status")
+        project_document = request.FILES.get("document")
+        if project_document:
+            project.project_document = project_document
+        project.save()
+        messages.success(request, f"Project '{project.title}' updated successfully.")
+        return redirect("set.projects")
+    context["project"] = project
+    return render(request, "pages/set/projects/edit-project.html", context)
+
+def detailProject(request, id):
     # project = get_object_or_404(Project, id=id)
-    # if request.method == "POST":
-    #     project.title = request.POST.get("title")
-    #     project.description = request.POST.get("description")
-    #     project.lead = request.POST.get("lead")
-    #     project.save()
-    #     messages.success(request, f"Project '{project.title}' updated successfully.")
-    #     return redirect("set.projects")
-    return render(request, "pages/set/projects/edit-project.html", {
-        # "project": project,
-        "active_menu": "set_projects"
-    })
-
-def detailProject(request):
-    # project = get_object_or_404(Project, id=id)
-    projects = [
-        {"id": 1, "title": "Project 1", "description": "Description for Project 1", "start_date": timezone.now() - timedelta(days=10), "deadline": timezone.now() - timedelta(days=1), "lead": "Aung Kyaw"},
-        {"id": 2, "title": "Project 2", "description": "Description for Project 2", "start_date": timezone.now() - timedelta(days=5), "deadline": timezone.now() - timedelta(days=2), "lead": "Thandar Hlaing"},
-        {"id": 3, "title": "Project 3", "description": "Description for Project 3", "start_date": timezone.now() - timedelta(days=2), "deadline": timezone.now(), "lead": "Ko Ko"},
-    ]
-    project = projects[0]
+    project = get_object_or_404(Project, id=id)
     return render(request, "pages/set/projects/project-detail.html", {
         "project": project,
         "active_menu": "set_projects"
     })
 
-def deleteProject(request):
-   
-    # if request.method == "POST":
-    #     project = [p for p in project if p["id"] != int(id)]
-    #     messages.success(request, f"Project '{project.title}' deleted successfully.")
-    #     return redirect("set.projects")
+def deleteProject(request, id):
+    project = get_object_or_404(Project, id=id)
+    if request.method == "POST":
+        project.delete()
+        messages.success(request, f"Project '{project.title}' deleted successfully.")
+        return redirect("set.projects")
     return render(request, "pages/set/projects/project-delete.html", {
-        # "project": project,
+        "project": project,
         "active_menu": "set_projects"
     })
