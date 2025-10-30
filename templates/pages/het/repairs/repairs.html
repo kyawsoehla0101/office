@@ -1,0 +1,112 @@
+{% extends 'layouts/main.html' %}
+{% block content %}
+<div class="bg-white p-6 rounded-2xl shadow-soft dark:bg-slate-900">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h2 class="text-2xl font-bold text-slate-800 dark:text-slate-200">Hardware Repair Tasks</h2>
+      <p class="text-slate-500 text-sm">All logged device repair and maintenance activities.</p>
+    </div>
+    <a href="{% url 'het.add-repair' %}"
+      class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-green-600 text-white hover:bg-green-700 shadow-md">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+      </svg>
+      Add Repair
+    </a>
+  </div>
+
+  <!-- Stats Overview -->
+  <div class="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-8">
+    <div class="bg-green-50 dark:bg-slate-800 rounded-2xl p-5 text-center border border-green-100 dark:border-slate-700">
+      <p class="text-sm text-slate-500 dark:text-slate-400">Total Repairs</p>
+      <p class="text-3xl font-bold text-green-700 dark:text-green-400">{{ total_repairs|default:0 }}</p>
+    </div>
+    <div class="bg-yellow-50 dark:bg-slate-800 rounded-2xl p-5 text-center border border-yellow-100 dark:border-slate-700">
+      <p class="text-sm text-slate-500 dark:text-slate-400">Pending</p>
+      <p class="text-3xl font-bold text-yellow-700 dark:text-yellow-400">{{ pending_repairs|default:0 }}</p>
+    </div>
+    <div class="bg-blue-50 dark:bg-slate-800 rounded-2xl p-5 text-center border border-blue-100 dark:border-slate-700">
+      <p class="text-sm text-slate-500 dark:text-slate-400">In Progress</p>
+      <p class="text-3xl font-bold text-blue-700 dark:text-blue-400">{{ progress_repairs|default:0 }}</p>
+    </div>
+    <div class="bg-green-100 dark:bg-slate-800 rounded-2xl p-5 text-center border border-green-100 dark:border-slate-700">
+      <p class="text-sm text-slate-500 dark:text-slate-400">Completed</p>
+      <p class="text-3xl font-bold text-green-800 dark:text-green-400">{{ completed_repairs|default:0 }}</p>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="overflow-x-auto border border-slate-200 dark:border-slate-700 rounded-xl">
+    <table class="w-full text-sm text-left text-slate-700 dark:text-slate-300">
+      <thead class="bg-green-100 dark:bg-slate-800 text-green-900 dark:text-green-400 uppercase text-xs">
+        <tr>
+          <th class="px-6 py-3">Ticket ID</th>
+          <th class="px-6 py-3">Device</th>
+          <th class="px-6 py-3">Technician</th>
+          <th class="px-6 py-3">Priority</th>
+          <th class="px-6 py-3">Status</th>
+          <th class="px-6 py-3">Received</th>
+          <th class="px-6 py-3 text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for repair in repairs %}
+        <tr class="border-b dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
+          <td class="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">{{ repair.ticket_id }}</td>
+          <td class="px-6 py-4">
+            <p class="font-semibold">{{ repair.device_name }}</p>
+            <p class="text-xs text-slate-500">{{ repair.get_device_type_display }}</p>
+          </td>
+          <td class="px-6 py-4">
+            {% if repair.technician %}
+            {{ repair.technician.full_name }}
+            {% else %}
+            <span class="text-slate-400 italic">Unassigned</span>
+            {% endif %}
+          </td>
+          <td class="px-6 py-4">
+            <span class="px-2 py-1 rounded-full text-xs font-medium 
+              {% if repair.priority == 'urgent' %}
+                bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-200
+              {% elif repair.priority == 'high' %}
+                bg-orange-100 text-orange-800 dark:bg-orange-800 dark:text-orange-200
+              {% elif repair.priority == 'medium' %}
+                bg-yellow-100 text-yellow-800 dark:bg-yellow-700 dark:text-yellow-200
+              {% else %}
+                bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200
+              {% endif %}">
+              {{ repair.get_priority_display }}
+            </span>
+          </td>
+          <td class="px-6 py-4">
+            <span class="px-3 py-1 rounded-full text-xs font-medium {{ repair.get_status_color }}">
+              {{ repair.get_status_display }}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-slate-600 dark:text-slate-400">{{ repair.received_date }}</td>
+          <td class="px-6 py-4 text-center">
+            <div class="flex justify-center gap-2">
+              <a href="{% url 'het.view-repair' repair.id %}"
+                class="px-3 py-1 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-slate-800 dark:text-blue-400 dark:hover:bg-slate-700 text-xs font-medium">
+                View
+              </a>
+              <a href="{% url 'het.edit-repair' repair.id %}"
+                class="px-3 py-1 rounded-lg bg-yellow-50 text-yellow-700 hover:bg-yellow-100 dark:bg-slate-800 dark:text-yellow-400 dark:hover:bg-slate-700 text-xs font-medium">
+                Edit
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">No repairs found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

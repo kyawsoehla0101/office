@@ -10,6 +10,12 @@ urlpatterns = [
     path('delete-member/<uuid:id>/', views.deleteMember, name='het.delete-member'),
     path('requirements/', views.requirements, name='het.requirements'),
     path('requirements/add/', views.addRequirement, name='het.add-requirement'),
-    path('report/', views.report, name='het.report'),
+    path('reports/', views.reports, name='het.reports'),
+    path("reports/export/csv/", views.export_reports_csv, name="het.export-reports-csv"),
+    path("reports/export/pdf/", views.export_reports_pdf, name="het.export-reports-pdf"),
     path('report/add/', views.addReport, name='het.add-report'),
+    path('repair/', views.repairs, name='het.repairs'),
+    path('repair/add/', views.addRepair, name='het.add-repair'),
+    path('repair/edit/<uuid:id>/', views.editRepair, name='het.edit-repair'),
+    path('repair/view/<uuid:id>/', views.view_repair, name='het.view-repair'),
 ]

@@ -145,15 +145,15 @@
           </a>
         </li>
         <li>
-          <a href=""
+          <a href="{% url 'het.repairs' %}"
             class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium
-                   {% if active_menu == 'het_projects' %}bg-slate-100 text-green-600 dark:bg-slate-800 dark:text-green-400{% else %}
+                   {% if active_menu == 'het_repairs' %}bg-slate-100 text-green-600 dark:bg-slate-800 dark:text-green-400{% else %}
                    text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800{% endif %}">
             <svg class="h-5 w-5 text-slate-400 group-hover:text-green-600" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="1.6">
               <path d="M3 3h18v4H3zM3 13h18v8H3zM7 7v6M17 7v6" />
             </svg>
-            Projects
+            HardwareRepair
           </a>
         </li>
         
@@ -171,7 +171,7 @@
           </a>
         </li>
         <li>
-          <a href="{% url 'het.report' %}"
+          <a href="{% url 'het.reports' %}"
             class="group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium
                    {% if active_menu == 'het_reports' %}bg-slate-100 text-green-600 dark:bg-slate-800 dark:text-green-400{% else %}
                    text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800{% endif %}">
